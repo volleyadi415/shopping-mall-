@@ -1,4 +1,9 @@
-const pool = require("../db/database");
+const winston = require("winston");
+const pool = require("../db/database")
+
+const logger = require('../logs/logger'); 
+
+
 
 class Login {
     static async login(req, res) {
@@ -7,7 +12,7 @@ class Login {
         const find = await pool.query(query1);
 
         if (find.rowCount == 0) {
-
+            logger.error('error','inavlid details')
             res.status(409).json({
                 "payload": [
                     {
@@ -16,12 +21,15 @@ class Login {
                 ],
                 "errors": [],
                 "success": false
-            })
+            });
+           
 
         }
         else {
             const query = `SELECT * FROM employee where email_id='${email_id}' and password='${password}'`
-            const find1 = await pool.query(query);
+             await pool.query(query);
+
+             logger.error('info','succesfully login ')
 
             res.status(200).json({
                 "payload": [
@@ -30,12 +38,15 @@ class Login {
                     }
                 ],
                 "errors": [],
-                "success": false
+                "success": true
             });
         }
 
     } catch (error) {
-        console.log(error)
+        res.send({
+            message:'error'
+        })
+        logger.error('error','inavlid details')
     }
 
 }

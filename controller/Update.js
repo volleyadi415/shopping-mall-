@@ -1,20 +1,17 @@
+const winston = require("winston");
 const pool = require("../db/database");
+
+const logger = require('../logs/logger'); 
 class Update {
     static async Update(req, res) {
         try {
-            //const{email_id}= req.params.email_id
-           // const { emp_id, name,mobile_number,national_id, password } =
-
-        
-            let email_id = req.body.email_id //body
-
-            let { emp_id, name, mobile_number, national_id, password } = req.body
+           
+            let { emp_id,email_id, name, mobile_number, national_id, password } = req.body
 
             const find = await pool.query(`select * from employee where email_id='${email_id}'`)
-            console.log(find)
 
             if (find.rowCount == 0) {
-                // throw error
+                logger.error('error','inavlid details')
                 res.send("employee not found")
             } else {
 
@@ -42,41 +39,24 @@ class Update {
                                   WHERE email_id='${email_id}'`
 
                 await pool.query(query1);
+                
+                loggererror('info','succesfully login ')
 
-                res.send("emp updated")
-                // console.log(query1)
-                // console.log(put)
-
-            //     if (put.rowCount > 0) {
-
-            //         res.status(200).json({
-            //             "payload": [
-            //                 {
-            //                     "Message": "Employee Updated"
-            //                 }
-            //             ],
-            //             "errors": [],
-            //             "success": true
-            //         });
-
-
-
-            //     } else {
-
-            //         res.status(404).json({
-            //             "payload": [
-            //                 {
-            //                     "Message": "Employee Not Found"
-            //                 }
-            //             ],
-            //             "errors": [],
-            //             "success": false
-            //         });
-            //     }
+                res.status(200).json({
+                    "payload": [
+                        {
+                            "Message": "Employee updated"
+                        }
+                    ],
+                    "errors": [],
+                    "success": true
+                });
+              
             }
 
         } catch (error) {
             console.log(error)
+            logger.error('error','inavlid details')
         }
 
     }
